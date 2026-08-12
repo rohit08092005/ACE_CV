@@ -1,0 +1,880 @@
+.interview-page {
+    width: 100%;
+    min-height: 100vh;
+
+    background-color: #0f172a;
+    color: whitesmoke;
+
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        sans-serif;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.interview-layout {
+    width: 100%;
+    min-height: 100vh;
+
+    display: grid;
+    grid-template-columns: 220px 1px minmax(0, 1fr) 1px 250px;
+
+    gap: 0;
+
+    padding: 2rem;
+}
+
+
+/* =========================================================
+   DIVIDERS
+========================================================= */
+
+.interview-divider {
+    width: 1px;
+    height: 100%;
+
+    background-color: rgba(224, 231, 255, 0.1);
+}
+
+
+/* =========================================================
+   LEFT NAVIGATION
+========================================================= */
+
+.interview-nav {
+    min-height: calc(100vh - 4rem);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 0.5rem 1.25rem 1rem 0;
+}
+
+
+.nav-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+
+.interview-nav__label {
+    margin: 0 0 1rem 0;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+
+    color: #7f8aaa;
+}
+
+
+.interview-nav__item {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.75rem;
+
+    padding: 0.8rem 0.9rem;
+
+    border: none;
+    border-radius: 0.5rem;
+
+    background-color: transparent;
+    color: #8f9bb8;
+
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.interview-nav__item:hover {
+    background-color: #172141;
+    color: whitesmoke;
+}
+
+
+.interview-nav__item--active {
+    background-color: #172141;
+    color: #e0e7ff;
+
+    box-shadow:
+        inset 3px 0 0 #e0e7ff;
+}
+
+
+.interview-nav__icon {
+    width: 18px;
+    height: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.primary-button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0.75rem 1rem;
+
+    border: none;
+    border-radius: 0.5rem;
+
+    background-color: #e0e7ff;
+    color: #111827;
+
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.primary-button:hover {
+    background-color: #c7d2fe;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 8px 20px rgba(224, 231, 255, 0.08);
+}
+
+
+.primary-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   CENTER CONTENT
+========================================================= */
+
+.interview-content {
+    min-width: 0;
+
+    padding: 0 2.5rem;
+}
+
+
+.content-header {
+    display: flex;
+    align-items: center;
+
+    gap: 0.8rem;
+
+    margin-bottom: 1.5rem;
+}
+
+
+.content-header h2 {
+    margin: 0;
+
+    color: whitesmoke;
+
+    font-size: 1.35rem;
+    font-weight: 600;
+}
+
+
+.content-header__count {
+    padding: 0.25rem 0.55rem;
+
+    border-radius: 999px;
+
+    background-color: #172141;
+    color: #9ba8c5;
+
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   QUESTION LIST
+========================================================= */
+
+.q-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.75rem;
+}
+
+
+/* =========================================================
+   QUESTION CARD
+========================================================= */
+
+.q-card {
+    width: 100%;
+
+    border: 1px solid rgba(224, 231, 255, 0.08);
+    border-radius: 0.65rem;
+
+    background-color: #172141;
+
+    overflow: hidden;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.q-card:hover {
+    border-color: rgba(224, 231, 255, 0.18);
+}
+
+
+.q-card__header {
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+
+    padding: 1rem 1.1rem;
+
+    cursor: pointer;
+}
+
+
+.q-card__index {
+    min-width: 38px;
+
+    color: #8996b5;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    letter-spacing: 0.05em;
+}
+
+
+.q-card__question {
+    flex: 1;
+
+    margin: 0;
+
+    color: #e8ebf5;
+
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+
+.q-card__chevron {
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #7f8aaa;
+
+    transition: transform 0.2s ease;
+}
+
+
+.q-card__chevron--open {
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   QUESTION CARD BODY
+========================================================= */
+
+.q-card__body {
+    padding: 0 1.1rem 1.1rem 1.1rem;
+
+    border-top: 1px solid rgba(224, 231, 255, 0.07);
+}
+
+
+.q-card__section {
+    padding-top: 1rem;
+}
+
+
+.q-card__section p {
+    margin: 0.55rem 0 0;
+
+    color: #aab4cb;
+
+    font-size: 0.82rem;
+    line-height: 1.65;
+}
+
+
+.q-card__tag {
+    display: inline-block;
+
+    padding: 0.25rem 0.55rem;
+
+    border-radius: 0.3rem;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+
+.q-card__tag--intention {
+    background-color: rgba(129, 140, 248, 0.12);
+    color: #a5b4fc;
+}
+
+
+.q-card__tag--answer {
+    background-color: rgba(224, 231, 255, 0.1);
+    color: #c7d2fe;
+}
+
+
+/* =========================================================
+   RIGHT SIDEBAR
+========================================================= */
+
+.interview-sidebar {
+    padding: 0.5rem 0 1rem 2rem;
+}
+
+
+/* =========================================================
+   MATCH SCORE
+========================================================= */
+
+.match-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+
+.match-score__label {
+    align-self: flex-start;
+
+    margin: 0 0 1.5rem 0;
+
+    color: #7f8aaa;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+
+.match-score__ring {
+    width: 130px;
+    height: 130px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #172141 62%,
+            transparent 63%
+        );
+
+    position: relative;
+}
+
+
+.match-score__ring::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 50%;
+
+    border: 7px solid rgba(224, 231, 255, 0.08);
+}
+
+
+.match-score__ring::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 50%;
+
+    border: 7px solid transparent;
+
+    border-top-color: #a5b4fc;
+    border-right-color: #a5b4fc;
+
+    transform: rotate(25deg);
+}
+
+
+.match-score__value {
+    position: relative;
+    z-index: 1;
+
+    color: #e0e7ff;
+
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+
+.match-score__pct {
+    position: relative;
+    z-index: 1;
+
+    margin-top: -0.25rem;
+
+    color: #8996b5;
+
+    font-size: 0.75rem;
+}
+
+
+.match-score__sub {
+    margin: 1rem 0 0;
+
+    color: #8996b5;
+
+    font-size: 0.75rem;
+}
+
+
+/* Score states */
+
+.score--high::after {
+    border-top-color: #a5b4fc;
+    border-right-color: #a5b4fc;
+}
+
+
+.score--mid::after {
+    border-top-color: #fbbf24;
+    border-right-color: #fbbf24;
+}
+
+
+.score--low::after {
+    border-top-color: #f87171;
+    border-right-color: #f87171;
+}
+
+
+/* =========================================================
+   SIDEBAR DIVIDER
+========================================================= */
+
+.sidebar-divider {
+    width: 100%;
+    height: 1px;
+
+    margin: 2rem 0;
+
+    background-color: rgba(224, 231, 255, 0.08);
+}
+
+
+/* =========================================================
+   SKILL GAPS
+========================================================= */
+
+.skill-gaps__label {
+    margin: 0 0 1rem;
+
+    color: #7f8aaa;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+
+.skill-gaps__list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.55rem;
+}
+
+
+.skill-tag {
+    display: block;
+
+    width: fit-content;
+    max-width: 100%;
+
+    padding: 0.45rem 0.65rem;
+
+    border-radius: 0.4rem;
+
+    font-size: 0.72rem;
+    line-height: 1.35;
+}
+
+
+.skill-tag--low {
+    background-color: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.15);
+
+    color: #86efac;
+}
+
+
+.skill-tag--medium {
+    background-color: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.15);
+
+    color: #fcd34d;
+}
+
+
+.skill-tag--high {
+    background-color: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.15);
+
+    color: #fca5a5;
+}
+
+
+/* =========================================================
+   ROAD MAP
+========================================================= */
+
+.roadmap-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.75rem;
+}
+
+
+.roadmap-day {
+    padding: 1.1rem;
+
+    border: 1px solid rgba(224, 231, 255, 0.08);
+    border-radius: 0.65rem;
+
+    background-color: #172141;
+
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.roadmap-day:hover {
+    border-color: rgba(224, 231, 255, 0.17);
+
+    transform: translateY(-1px);
+}
+
+
+.roadmap-day__header {
+    display: flex;
+    align-items: center;
+
+    gap: 0.8rem;
+
+    margin-bottom: 0.9rem;
+}
+
+
+.roadmap-day__badge {
+    padding: 0.3rem 0.55rem;
+
+    border-radius: 0.3rem;
+
+    background-color: #e0e7ff;
+    color: #111827;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+
+.roadmap-day__focus {
+    margin: 0;
+
+    color: #e5e7eb;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+
+.roadmap-day__tasks {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.55rem;
+}
+
+
+.roadmap-day__tasks li {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.65rem;
+
+    color: #9da9c2;
+
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+
+.roadmap-day__bullet {
+    width: 5px;
+    height: 5px;
+
+    flex-shrink: 0;
+
+    margin-top: 0.5rem;
+
+    border-radius: 50%;
+
+    background-color: #a5b4fc;
+}
+
+
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+
+.loading-screen {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #0f172a;
+    color: whitesmoke;
+}
+
+
+.loading-screen h1 {
+    font-size: 1rem;
+    font-weight: 500;
+
+    color: #9da9c2;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .interview-layout {
+        grid-template-columns:
+            190px
+            1px
+            minmax(0, 1fr)
+            1px
+            210px;
+
+        padding: 1.25rem;
+    }
+
+    .interview-content {
+        padding: 0 1.5rem;
+    }
+
+    .interview-sidebar {
+        padding-left: 1.5rem;
+    }
+
+}
+
+
+@media (max-width: 850px) {
+
+    .interview-layout {
+        grid-template-columns: 180px 1px minmax(0, 1fr);
+    }
+
+    .interview-sidebar {
+        display: none;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .interview-layout {
+        display: block;
+
+        padding: 1rem;
+    }
+
+
+    .interview-nav {
+        min-height: auto;
+
+        padding: 0 0 1rem;
+    }
+
+
+    .nav-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+
+    .interview-nav__label {
+        width: 100%;
+
+        margin-bottom: 0.5rem;
+    }
+
+
+    .interview-nav__item {
+        width: auto;
+    }
+
+
+    .interview-nav__item--active {
+        box-shadow: none;
+    }
+
+
+    .interview-nav .primary-button {
+        margin-top: 1rem;
+    }
+
+
+    .interview-divider {
+        display: none;
+    }
+
+
+    .interview-content {
+        padding: 1.5rem 0 0;
+    }
+
+
+    .content-header {
+        flex-wrap: wrap;
+    }
+
+
+    .q-card__header {
+        align-items: flex-start;
+    }
+
+
+    .q-card__question {
+        font-size: 0.82rem;
+    }
+
+
+    .roadmap-day__header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+/*FOOTER*/
+
+.footer {
+    width: 100%;
+    height: 60px;
+    margin-top: 40px;
+padding-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 1.5rem;
+
+    background: transparent;
+
+    border-top: 1px solid rgba(224, 231, 255, 0.06);
+
+    font-size: 0.8rem;
+}
+
+.footer span {
+    color: #724969;
+    font-weight: 700;
+}
+
+.footer p,
+.footer small {
+    margin: 0;
+    color: #724969;
+    
+}
