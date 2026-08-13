@@ -194,9 +194,13 @@ ${jobDescription}`;
 // }
 
 async function generatePdfFromHtml(htmlContent) {
+    const executablePath = typeof chromium.executablePath === "function"
+        ? await chromium.executablePath()
+        : chromium.executablePath;
+
     const browser = await puppeteer.launch({
         args: chromium.args,
-        executablePath: await chromium.executablePath(),
+        executablePath: executablePath,
         headless: chromium.headless,
     });
     const page = await browser.newPage();
