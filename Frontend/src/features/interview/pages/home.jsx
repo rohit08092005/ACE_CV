@@ -8,6 +8,23 @@ import{useInterview} from '../hooks/useInterview.js'
 import {useNavigate} from 'react-router'
 import { useAuth } from '../../auth/hooks/useAuth.js'
 
+const formatFileSize = (bytes) => {
+    if (bytes === 0) return "0 B"
+
+    const units = ["B", "KB", "MB", "GB"]
+    const unitIndex = Math.floor(Math.log(bytes) / Math.log(1024))
+    const size = bytes / (1024 ** unitIndex)
+
+    return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
+}
+
+const getFileType = (file) => {
+    const extension = file.name.split(".").pop()?.toLowerCase()
+
+    if (extension === "pdf") return "PDF Document"
+
+    return file.type || "Document"
+}
 
 const Home = () => {
     const {loading, generateReport,reports} = useInterview()
@@ -15,15 +32,24 @@ const Home = () => {
     const[jobDescription, setJobDescription]=useState("")
     const[selfDescription,setSelfDescription]=useState("")
     const [logoutError, setLogoutError] = useState("")
+    const [selectedResume, setSelectedResume] = useState(null)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
     const handleGenerateReport = async () =>{
-        const resumeFile = resumeInputRef.current.files[0]
-        const data =await generateReport({jobDescription,selfDescription,resumeFile})
+        const data =await generateReport({jobDescription,selfDescription,resumeFile:selectedResume})
         navigate(`/interview/${data._id}`)
         
+    }
+
+    const handleResumeChange = (e) => {
+        setSelectedResume(e.target.files[0] || null)
+    }
+
+    const handleRemoveResume = () => {
+        setSelectedResume(null)
+        resumeInputRef.current.value = ""
     }
 
     const handleLogoutClick = async () => {
@@ -128,29 +154,57 @@ e.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScri
               </span>
 
               <strong>
-                Click to upload or drag & drop
+                Click to upload the file.
               </strong>
 
               <small>
-                PDF or DOCX (Max 5MB)
+                PDF (Max 5MB)
               </small>
             </label>
 
             <input
                 ref={resumeInputRef}
+              onChange={handleResumeChange}
               hidden
               type="file"
               name="resume"
               id="resume"
-              accept=".pdf,.docx"
+              accept=".pdf"
             />
+
+            {selectedResume && (
+              <div className="selected-resume">
+                <div className="selected-resume__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="8" y1="13" x2="16" y2="13" />
+                    <line x1="8" y1="17" x2="13" y2="17" />
+                  </svg>
+                </div>
+
+                <div className="selected-resume__details">
+                  <strong title={selectedResume.name}>{selectedResume.name}</strong>
+                  <span>{formatFileSize(selectedResume.size)} · {getFileType(selectedResume)}</span>
+                </div>
+
+                <button
+                  className="selected-resume__remove"
+                  type="button"
+                  onClick={handleRemoveResume}
+                  aria-label={`Remove ${selectedResume.name}`}
+                >
+                  ×
+                </button>
+              </div>
+            )}
 
           </div>
 
 
           {/* OR */}
           <div className="divider">
-            <span>OR</span>
+            {/* <span>OR</span> */}
           </div>
 
 
@@ -173,9 +227,10 @@ e.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScri
 
           {/* Info */}
           <div className="info-message">
-            💡 Either a Resume or a Self Description is required
-            to generate a personalized plan.
-          </div>
+  💡 A Resume or Self Description is required to generate a personalized plan.
+  <br></br>
+  💡For the best and most accurate results, use both.
+</div>
 
         </div>
 
