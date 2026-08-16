@@ -6,12 +6,15 @@ import React,{useState,useRef} from "react";
 import "../style/home.scss";
 import{useInterview} from '../hooks/useInterview.js'
 import {useNavigate} from 'react-router'
+import { useAuth } from '../../auth/hooks/useAuth.js'
 
 
 const Home = () => {
     const {loading, generateReport,reports} = useInterview()
+    const { loading: authLoading, handleLogout } = useAuth()
     const[jobDescription, setJobDescription]=useState("")
     const[selfDescription,setSelfDescription]=useState("")
+    const [logoutError, setLogoutError] = useState("")
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
@@ -21,6 +24,17 @@ const Home = () => {
         const data =await generateReport({jobDescription,selfDescription,resumeFile})
         navigate(`/interview/${data._id}`)
         
+    }
+
+    const handleLogoutClick = async () => {
+        setLogoutError("")
+
+        try {
+            await handleLogout()
+            navigate('/login')
+        } catch (error) {
+            setLogoutError(error.response?.data?.message || "Unable to log out. Please try again.")
+        }
     }
 
     if(loading){
@@ -36,13 +50,24 @@ const Home = () => {
 
       {/* Header */}
       <header className="home-header">
-        <h1>ACE_CV</h1>
+        <div className="home-header__top">
+          <h1>ACE_CV</h1>
+          <button
+            className="button logout-button"
+            type="button"
+            onClick={handleLogoutClick}
+            disabled={authLoading}
+          >
+            {authLoading ? "Logging out..." : "Logout"}
+          </button>
+        </div>
          <h2>AI-Powered Interview Preparation</h2>
 
   <p>
     Upload your resume, add a job description, and get
     a personalized interview strategy tailored to you.
   </p>
+      {logoutError && <p className="logout-error" role="alert">{logoutError}</p>}
       </header>
 
 
