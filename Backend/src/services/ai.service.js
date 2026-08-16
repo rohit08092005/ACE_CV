@@ -194,14 +194,17 @@ ${jobDescription}`;
 // }
 
 async function generatePdfFromHtml(htmlContent) {
-    const executablePath = typeof chromium.executablePath === "function"
-        ? await chromium.executablePath()
-        : chromium.executablePath;
+    const isLocalWindows = process.platform === "win32";
+    const executablePath = isLocalWindows
+        ? process.env.CHROME_EXECUTABLE_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        : typeof chromium.executablePath === "function"
+            ? await chromium.executablePath()
+            : chromium.executablePath;
 
     const browser = await puppeteer.launch({
-        args: chromium.args,
+        args: isLocalWindows ? [] : chromium.args,
         executablePath: executablePath,
-        headless: chromium.headless,
+        headless: isLocalWindows ? true : chromium.headless,
     });
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
