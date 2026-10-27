@@ -6,7 +6,7 @@ import { login, register, logout, getMe } from "../services/auth.api";
 export const useAuth = () => {
 
     const context = useContext(AuthContext);
-    const { user, setUser, loading, setLoading } = context;
+    const { user, setUser, loading, setLoading, authChecking, setAuthChecking } = context;
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true);
@@ -58,7 +58,7 @@ export const useAuth = () => {
             } catch (err) {
                 setUser(null);
             } finally {
-                setLoading(false);
+                setAuthChecking(false);
             }
         };
 
@@ -69,6 +69,7 @@ export const useAuth = () => {
     return {
         user,
         loading,
+        authChecking,
         handleRegister,
         handleLogin,
         handleLogout

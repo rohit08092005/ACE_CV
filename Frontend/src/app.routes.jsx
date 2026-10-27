@@ -1,9 +1,11 @@
+import { lazy } from "react";
 import {createBrowserRouter} from "react-router";
-import Login from "./features/auth/pages/Login";
-import Register from "./features/auth/pages/Register";
 import Protected from "./features/auth/components/Protected";
-import Home from "./features/interview/pages/home"
-import Interview from "./features/interview/pages/Interview";
+
+const Login = lazy(() => import("./features/auth/pages/Login"));
+const Register = lazy(() => import("./features/auth/pages/Register"));
+const Home = lazy(() => import("./features/interview/pages/home"));
+const Interview = lazy(() => import("./features/interview/pages/Interview"));
 
 export const router = createBrowserRouter([
 

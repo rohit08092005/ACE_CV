@@ -7,6 +7,7 @@ import "../style/home.scss";
 import{useInterview} from '../hooks/useInterview.js'
 import {useNavigate} from 'react-router'
 import { useAuth } from '../../auth/hooks/useAuth.js'
+import LoadingScreen from '../../../components/LoadingScreen.jsx'
 
 const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 B"
@@ -27,7 +28,7 @@ const getFileType = (file) => {
 }
 
 const Home = () => {
-    const {loading, generateReport,reports} = useInterview()
+    const {generating, generateReport,reports} = useInterview()
     const { loading: authLoading, handleLogout } = useAuth()
     const[jobDescription, setJobDescription]=useState("")
     const[selfDescription,setSelfDescription]=useState("")
@@ -63,12 +64,8 @@ const Home = () => {
         }
     }
 
-    if(loading){
-        return(
-            <main className="loading-screen">
-            <h1>Loading your interview plan...</h1>
-            </main>
-        )
+    if(generating){
+      return <LoadingScreen />
     }
 
   return (
