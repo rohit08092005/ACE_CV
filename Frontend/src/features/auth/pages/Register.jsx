@@ -1,10 +1,8 @@
 
-import React from 'react'
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import "../auth.form.scss"
-import LoadingScreen from "../../../components/LoadingScreen.jsx"
 
 const Register = () => {
 
@@ -15,15 +13,21 @@ const Register = () => {
     const [password, setPassword] = useState("")
 
     const { loading, handleRegister } = useAuth()
+    const [error, setError] = useState("")
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleRegister({ username, email, password })
-        navigate('/')
-    }
-
-    if (loading) {
-        return <LoadingScreen message="Loading..." />
+        setError("")
+        try {
+            await handleRegister({ username, email, password })
+            navigate('/')
+        } catch (requestError) {
+            setError(
+                requestError.code === "ECONNABORTED"
+                    ? "The server is taking too long to respond. Please try again."
+                    : requestError.response?.data?.message || "Unable to create your account. Please try again."
+            )
+        }
     }
 
     return (
@@ -109,6 +113,8 @@ const Register = () => {
 
                         <form onSubmit={handleSubmit}>
 
+                            {error && <p className="auth-error" role="alert">{error}</p>}
+
                             <div className="input-group">
 
                                 <label htmlFor="username">
@@ -172,8 +178,9 @@ const Register = () => {
                             <button
                                 className="button primary-button login-button"
                                 type="submit"
+                                disabled={loading}
                             >
-                                Create Account →
+                                {loading ? "Creating account..." : "Create Account →"}
                             </button>
 
                         </form>

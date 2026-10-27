@@ -1,8 +1,13 @@
 import {getAllInterviewReports,generateInterviewReport,getInterviewReportById,generateResumePdf} from "../services/interview.api"
-import { useContext, useEffect } from "react"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
 
+const getRequestError = (requestError, fallback) => (
+    requestError.code === "ECONNABORTED"
+        ? "The server is taking too long to respond. Please try again."
+        : requestError.response?.data?.message || fallback
+)
 
 export const useInterview =() =>{
 
@@ -13,81 +18,91 @@ export const useInterview =() =>{
         throw new Error ("useInterview must be used within an InterviewProvider")
     }
 
-    const {loading,setLoading,generating,setGenerating,downloadLoading,setDownloadLoading,report,setReport,reports,setReports} =context
+    const {loading,setLoading,generating,setGenerating,downloadLoading,setDownloadLoading,report,setReport,reports,setReports,error,setError} =context
+    const lastFetch = useRef(null)
 
     const generateReport = async ({jobDescription,selfDescription,resumeFile}) =>{
         setGenerating(true)
-
-         let response = null
+        setError("")
         try {
-            response = await generateInterviewReport({ jobDescription, selfDescription, resumeFile })
+            const response = await generateInterviewReport({ jobDescription, selfDescription, resumeFile })
             setReport(response.interviewReport)
-        } catch (error) {
-            console.log(error)
+            return response.interviewReport
+        } catch (requestError) {
+            throw new Error(
+                getRequestError(requestError, "Unable to generate your interview plan. Please try again."),
+                { cause: requestError }
+            )
         } finally {
             setGenerating(false)
         }
-
-        return response.interviewReport
 }
 
 
-   const getReportById = async (interviewId) => {
+   const getReportById = useCallback(async (interviewId) => {
         setLoading(true)
-        let response = null
+        setError("")
+        setReport(null)
         try {
-            response = await getInterviewReportById(interviewId)
+            const response = await getInterviewReportById(interviewId)
             setReport(response.interviewReport)
+            return response.interviewReport
         } catch (error) {
-            console.log(error)
+            setError(getRequestError(error, "Unable to load this interview plan. Please retry."))
+            return null
         } finally {
             setLoading(false)
         }
-        return response.interviewReport
-    }
+    }, [setError, setLoading, setReport])
 
- const getReports = async () => {
+ const getReports = useCallback(async () => {
         setLoading(true)
-        let response = null
+        setError("")
         try {
-            response = await getAllInterviewReports()
+            const response = await getAllInterviewReports()
             setReports(response.interviewReports)
+            return response.interviewReports
         } catch (error) {
-            console.log(error)
+            setError(getRequestError(error, "Unable to load your recent interview plans. Please retry."))
+            setReports([])
+            return []
         } finally {
             setLoading(false)
         }
-
-        return response.interviewReports
-    }
-
+    }, [setError, setLoading, setReports])
 
 const getResumePdf = async (interviewReportId) => {
     setDownloadLoading(true)
-        let response = null
+    setError("")
         try {
-            response = await generateResumePdf({ interviewReportId })
+            const response = await generateResumePdf({ interviewReportId })
             const url = window.URL.createObjectURL(new Blob([ response ], { type: "application/pdf" }))
             const link = document.createElement("a")
             link.href = url
             link.setAttribute("download", `resume_${interviewReportId}.pdf`)
             document.body.appendChild(link)
             link.click()
+            link.remove()
+            window.URL.revokeObjectURL(url)
         }
-        catch (error) {
-            console.log(error)
+        catch (requestError) {
+            setError(getRequestError(requestError, "Unable to prepare the resume. Please try again."))
         } finally {
             setDownloadLoading(false)
         }
     }
 
      useEffect(() => {
+        const requestKey = interviewId ? `report:${interviewId}` : "reports"
+        if (lastFetch.current === requestKey) return
+        lastFetch.current = requestKey
+
         if (interviewId) {
             getReportById(interviewId)
         } else {
             getReports()
         }
-    }, [ interviewId ])
+    }, [ interviewId, getReportById, getReports ])
 
-    return { loading, generating, downloadLoading, report, reports, generateReport, getReportById, getReports, getResumePdf}
+    return { loading, generating, downloadLoading, report, reports, error, generateReport, getReportById, getReports, getResumePdf}
 }

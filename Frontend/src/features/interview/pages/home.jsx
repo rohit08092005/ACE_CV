@@ -2,7 +2,7 @@
 
 
 
-import React,{useState,useRef} from "react";
+import {useState,useRef} from "react";
 import "../style/home.scss";
 import{useInterview} from '../hooks/useInterview.js'
 import {useNavigate} from 'react-router'
@@ -28,20 +28,25 @@ const getFileType = (file) => {
 }
 
 const Home = () => {
-    const {generating, generateReport,reports} = useInterview()
+    const {generating, loading: reportsLoading, error: reportsError, generateReport, getReports, reports} = useInterview()
     const { loading: authLoading, handleLogout } = useAuth()
     const[jobDescription, setJobDescription]=useState("")
     const[selfDescription,setSelfDescription]=useState("")
     const [logoutError, setLogoutError] = useState("")
+    const [generationError, setGenerationError] = useState("")
     const [selectedResume, setSelectedResume] = useState(null)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
     const handleGenerateReport = async () =>{
-        const data =await generateReport({jobDescription,selfDescription,resumeFile:selectedResume})
-        navigate(`/interview/${data._id}`)
-        
+        setGenerationError("")
+        try {
+            const data = await generateReport({jobDescription,selfDescription,resumeFile:selectedResume})
+            if (data?._id) navigate(`/interview/${data._id}`)
+        } catch (error) {
+            setGenerationError(error.message)
+        }
     }
 
     const handleResumeChange = (e) => {
@@ -65,7 +70,7 @@ const Home = () => {
     }
 
     if(generating){
-      return <LoadingScreen />
+      return <LoadingScreen message="Generating your interview strategy..." />
     }
 
   return (
@@ -250,20 +255,30 @@ e.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScri
         </button>
 
       </section>
+      {generationError && <p className="request-error" role="alert">{generationError}</p>}
 
       {/*Recent Reports List*/}
-         {reports.length > 0 && (
+         {(reportsLoading || reportsError || reports.length > 0) && (
                 <section className='recent-reports'>
                     <h2>My Recent Interview Plans</h2>
-                    <ul className='reports-list'>
-                        {reports.map(report => (
-                            <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
-                                <h3>{report.title || 'Untitled Position'}</h3>
-                                <p className='report-meta'>Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
-                                <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
-                            </li>
-                        ))}
-                    </ul>
+                    {reportsLoading ? (
+                        <p className="request-status" role="status">Loading your plans...</p>
+                    ) : reportsError ? (
+                        <div className="request-error" role="alert">
+                            <p>{reportsError}</p>
+                            <button className="button" type="button" onClick={getReports}>Retry</button>
+                        </div>
+                    ) : (
+                        <ul className='reports-list'>
+                            {reports.map(report => (
+                                <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
+                                    <h3>{report.title || 'Untitled Position'}</h3>
+                                    <p className='report-meta'>Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
+                                    <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </section>
          )}
 

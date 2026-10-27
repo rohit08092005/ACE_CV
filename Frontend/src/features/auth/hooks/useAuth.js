@@ -1,12 +1,15 @@
 
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../auth.context";
-import { login, register, logout, getMe } from "../services/auth.api";
+import { login, register, logout } from "../services/auth.api";
 
 export const useAuth = () => {
 
     const context = useContext(AuthContext);
-    const { user, setUser, loading, setLoading, authChecking, setAuthChecking } = context;
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider")
+    }
+    const { user, setUser, loading, setLoading, authChecking, authError, retryAuthCheck } = context;
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true);
@@ -15,8 +18,6 @@ export const useAuth = () => {
             const data = await login({ email, password });
             setUser(data.user);
             return data;
-        } catch (err) {
-            throw err;
         } finally {
             setLoading(false);
         }
@@ -29,8 +30,6 @@ export const useAuth = () => {
             const data = await register({ username, email, password });
             setUser(data.user);
             return data;
-        } catch (err) {
-            throw err;
         } finally {
             setLoading(false);
         }
@@ -42,34 +41,17 @@ export const useAuth = () => {
         try {
             await logout();
             setUser(null);
-        } catch (err) {
-            throw err;
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-
-        const getAndSetUser = async () => {
-            try {
-                const data = await getMe();
-                setUser(data.user);
-            } catch (err) {
-                setUser(null);
-            } finally {
-                setAuthChecking(false);
-            }
-        };
-
-        getAndSetUser();
-
-    }, []);
-
     return {
         user,
         loading,
         authChecking,
+        authError,
+        retryAuthCheck,
         handleRegister,
         handleLogin,
         handleLogout

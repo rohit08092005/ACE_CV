@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import "../auth.form.scss"
 import { useAuth } from "../hooks/useAuth"
-import LoadingScreen from "../../../components/LoadingScreen.jsx"
 
 const Login = () => {
 
@@ -12,15 +11,21 @@ const Login = () => {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleLogin({email, password})
-        navigate('/')
-    }
-
-    if (loading) {
-        return <LoadingScreen message="Loading..." />
+        setError("")
+        try {
+            await handleLogin({email, password})
+            navigate('/')
+        } catch (requestError) {
+            setError(
+                requestError.code === "ECONNABORTED"
+                    ? "The server is taking too long to respond. Please try again."
+                    : requestError.response?.data?.message || "Unable to log in. Check your details and try again."
+            )
+        }
     }
 
     return (
@@ -93,6 +98,8 @@ const Login = () => {
 
                         <form onSubmit={handleSubmit}>
 
+                            {error && <p className="auth-error" role="alert">{error}</p>}
+
                             <div className="input-group">
 
                                 <label htmlFor="email">
@@ -140,8 +147,9 @@ const Login = () => {
                             <button
                                 className="button primary-button login-button"
                                 type="submit"
+                                disabled={loading}
                             >
-                                Login →
+                                {loading ? "Logging in..." : "Login →"}
                             </button>
 
                         </form>

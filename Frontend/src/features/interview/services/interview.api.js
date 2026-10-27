@@ -1,8 +1,12 @@
 import axios from "axios" ;
 
+const apiBaseUrl = import.meta.env.VITE_API_URL || (
+    import.meta.env.DEV ? "http://localhost:3000" : window.location.origin
+)
 
 const api =axios.create({
-    baseURL: import.meta.env.VITE_API_URL ||"http://localhost:3000",
+    baseURL: apiBaseUrl,
+    timeout: 30000,
     withCredentials:true,
 })
 
@@ -22,7 +26,7 @@ export const generateInterviewReport =async({jobDescription, selfDescription, re
     //     }
     // })
 
-    const response = await api.post("/api/interview/", formData)
+    const response = await api.post("/api/interview/", formData, { timeout: 120000 })
 
     return response.data
 }
@@ -52,11 +56,11 @@ export const getAllInterviewReports = async () =>{
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
     const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, null, {
-        responseType: "blob"
+        responseType: "blob",
+        timeout: 60000,
     })
 
     return response.data
 }
-
 
 

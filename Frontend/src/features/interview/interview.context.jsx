@@ -8,9 +8,10 @@ export const InterviewProvider =({children}) =>{
     const [downloadLoading,setDownloadLoading] = useState(false)
     const[report,setReport] = useState(null)
     const [reports,setReports] = useState([])
+    const [error,setError] = useState("")
 
     return (
-        <InterviewContext.Provider value ={{ loading, setLoading, generating, setGenerating, downloadLoading, setDownloadLoading, report, setReport,reports,setReports}}>
+        <InterviewContext.Provider value ={{ loading, setLoading, generating, setGenerating, downloadLoading, setDownloadLoading, report, setReport,reports,setReports,error,setError}}>
             {children}
         </InterviewContext.Provider>
     )
